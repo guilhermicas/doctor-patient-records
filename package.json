@@ -1,0 +1,24 @@
+{
+  "name": "dprecords",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guilhermicas/doctor-patient-records.git"
+  },
+  "author": "Guilherme Silva",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/guilhermicas/doctor-patient-records/issues"
+  },
+  "homepage": "https://github.com/guilhermicas/doctor-patient-records#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6"
+  }
+}
