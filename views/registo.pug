@@ -1,0 +1,14 @@
+extends base
+block body
+  h5 Pagina de registo
+  form(method="POST")
+    p Nome
+    input(type="text")
+    p Email
+    input(type="email", placeholder="exemplo@gmail.com")
+    p Palavra-Passe
+    input(type="password", placeholder="·······")
+    br
+    input(type="submit", value="Efetuar Registo")
+    br
+    a(href="/login") Efetuar login
