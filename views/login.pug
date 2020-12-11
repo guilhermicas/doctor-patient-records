@@ -1,11 +1,12 @@
 extends base
 block body
+  script(src="/public/js/login.js", type="text/javascript", defer)
   h5 Pagina de login
   form(method="POST")
     p Email
-    input(type="email", placeholder="exemplo@gmail.com")
+    input(type="email", placeholder="exemplo@gmail.com", name="email")
     p Password
-    input(type="password", placeholder="·······")
+    input(type="password", placeholder="·······", name="password")
     br
     input(type="submit", value="Efetuar Login")
     br

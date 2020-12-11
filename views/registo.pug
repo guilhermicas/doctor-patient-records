@@ -2,8 +2,6 @@ extends base
 block body
   script(src="/public/js/register.js", type="text/javascript", defer)
   h5 Pagina de registo
-  if error
-    p $(error)
   form(method="POST", class="form")
     p Nome
     input(type="text", name="nome", required)
