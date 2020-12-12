@@ -1,63 +1,54 @@
 let express = require("express");
 let bcrypt = require("bcryptjs");
 let router = express.Router();
+let sessions = require("client-sessions");
+
+//DB
 let dbConnection = require("../config/db_conn");
 let userSchemas = require("../schemas/user.schema");
 //TODO: Criar middleware que verifica a cookie de sessão
+//Middlewares
+//Cookie
+router.use(
+  sessions({
+    cookieName: "session",
+    secret: process.env.COOKIE_SECRET_STR,
+    duration: 1000 * 60 * 60 * 6, //Cookie ativa por 6 horas
+  })
+);
 
-// GET /
-router.get("/", (req, res, next) => {
-  res.render("login");
+//Smart User Middlewares
+router.use(async (req, res, next) => {
+  //Se não existir cookie, continua, caso vá para
+  if (!(req.session && req.session.uID)) {
+    return next();
+  }
+
+  let rows = await (
+    await dbConnection
+  ).query("SELECT nome, email, created_at FROM User WHERE user_id=?;", [
+    req.session.uID,
+  ]);
+
+  if (rows.length === 0) {
+    return next();
+  }
+  req.user = rows[0];
+  next();
 });
 
-// POST /
-router.post("/", async (req, res, next) => {
-  //Validação de dados do frontend
-  let validatedUser = userSchemas.userLoginSchema.validate(req.body);
-
-  if (validatedUser.error) {
-    res.status(400).json({
-      message: validatedUser.error.details[0].context.label,
-    });
-    return;
+//Login-Required
+function loginRequired(req, res, next) {
+  if (!req.user && !req.session.uID) {
+    return res.redirect("/");
   }
+  next();
+}
 
-  validatedUser = validatedUser.value;
-
-  //Verificar se a conta existe na base de dados, se sim, buscar o id do user e criar uma cookie de sessão no cliente com essa cookie encriptada
-  try {
-    let rows = await (
-      await dbConnection
-    ).query("SELECT user_id FROM User WHERE email=? AND password=?;", [
-      validatedUser.email,
-      validatedUser.password,
-    ]);
-    //TODO: atualizar para funcionar com hash da palavra passe (se calhar primeiro verificar email, se existir buscar a palavra passe desse email e fazer compare com o bcrypt com a inserida)
-
-    //Caso não haja conta
-    if (!rows || rows.length === 0) {
-      console.log("[ERRO] Conta não existe");
-      res.status(400).json({
-        message:
-          "Essa conta não existe, verifique se os dados estão bem inseridos",
-      });
-      return;
-    }
-
-    //TODO: Caso tudo esteja correto, criar cookie de sessão e redirecionar para dashboard
-    // req.session.sessionCookie = rows[0].user_id; //Pseudocódigo
-    console.log("[SUCESSO] Conta existe");
-    res.status(200).json({
-      message: "Conta existe, criar cookie de sessão e redirecionar",
-    });
-  } catch (err) {
-    console.log(
-      "[ERRO] Ocorreu algum erro a efetuar log-in\n" + err.stack || err.message
-    );
-    return res
-      .status(500)
-      .json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
-  }
+router.get("/logout", (req, res, next) => {
+  req.user = null;
+  req.session.uID = null;
+  res.redirect("/");
 });
 
 // GET /registo
@@ -113,6 +104,70 @@ router.post("/registo", async (req, res, next) => {
   } catch (err) {
     console.log(
       "[ERRO] Ocorreu algum erro a registar\n" + err.stack || err.message
+    );
+    return res
+      .status(500)
+      .json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+  }
+});
+
+//GET /dashboard
+router.get("/dashboard", loginRequired, (req, res, next) => {
+  res.render("dashboard", {
+    user: req.user,
+  });
+});
+
+// GET /
+router.get("/", (req, res, next) => {
+  res.render("login");
+});
+
+// POST /
+router.post("/", async (req, res, next) => {
+  //Validação de dados do frontend
+  let validatedUser = userSchemas.userLoginSchema.validate(req.body);
+
+  if (validatedUser.error) {
+    res.status(400).json({
+      message: validatedUser.error.details[0].context.label,
+    });
+    return;
+  }
+
+  validatedUser = validatedUser.value;
+
+  //Verificar se a conta existe na base de dados, se sim, buscar o id do user e criar uma cookie de sessão no cliente com essa cookie encriptada
+  try {
+    let rows = await (
+      await dbConnection
+    ).query("SELECT password, user_id FROM User WHERE email=?;", [
+      validatedUser.email,
+    ]);
+
+    //Se existir conta verificar a palavra passe
+    if (rows.length === 1) {
+      //Verificação da password
+      if (bcrypt.compareSync(validatedUser.password, rows[0].password)) {
+        console.log("[SUCESSO] Conta existe");
+        req.session.uID = rows[0].user_id; //Pseudocódigo
+        console.log(req.session.uID);
+        return res.redirect("/dashboard");
+      } else {
+        console.log("[ERRO] Password Incorreta");
+        res.status(400).json({
+          message: "Palavra-passe incorreta",
+        });
+      }
+    } else {
+      console.log("[ERRO] E-mail não registado");
+      res.status(400).json({
+        message: "Não existe conta com esse e-mail",
+      });
+    }
+  } catch (err) {
+    console.log(
+      "[ERRO] Ocorreu algum erro a efetuar log-in\n" + err.stack || err.message
     );
     return res
       .status(500)
