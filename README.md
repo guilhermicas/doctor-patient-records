@@ -1,8 +1,8 @@
 # Definicao de objetivos
 
 - [x] Servidor
+- [x] Autenticacao (cookie de sessao)
 - [] Routes do user
-- [] Autenticacao (cookie de sessao)
 - [] Routes de funcionalidade
 - [] UX/UI
 
