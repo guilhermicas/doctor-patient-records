@@ -1,8 +1,6 @@
-let btnSubmit = document.querySelector(".submit");
-let formElement = document.querySelector(".form");
-
-btnSubmit.addEventListener("click", async (e) => {
+document.querySelector(".submit").addEventListener("click", async (e) => {
   e.preventDefault();
+  let formElement = document.querySelector(".form");
   //TODO: Frontend validation
   //Dados do form
   const data = new URLSearchParams(new FormData(formElement));
