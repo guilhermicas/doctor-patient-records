@@ -6,7 +6,7 @@ let sessions = require("client-sessions");
 //DB
 let dbConnection = require("../config/db_conn");
 let userSchemas = require("../schemas/user.schema");
-//TODO: Criar middleware que verifica a cookie de sessão
+
 //Middlewares
 //Cookie
 router.use(
@@ -33,6 +33,8 @@ router.use(async (req, res, next) => {
   if (rows.length === 0) {
     return next();
   }
+
+  //Cria req.user, que é necessário para verificar redirecionamento em caso de necessidade de login, na função loginRequired
   req.user = rows[0];
   next();
 });
@@ -111,11 +113,23 @@ router.post("/registo", async (req, res, next) => {
   }
 });
 
-//GET /dashboard
-router.get("/dashboard", loginRequired, (req, res, next) => {
-  res.render("dashboard", {
-    user: req.user,
-  });
+//GET /categorias
+router.get("/categorias", loginRequired, async (req, res, next) => {
+  //Buscar categorias do user atual e devolver no frontend
+  try {
+    let categorias = await (
+      await dbConnection
+    ).query("SELECT * FROM Categoria WHERE user_id=?;", [req.session.uID]);
+
+    return res.render("categorias", {
+      categorias: categorias,
+    });
+  } catch (err) {
+    return res.render("categorias", {
+      err:
+        "Ocorreu algum erro a aceder ás suas categorias, experimente re-entrar na página",
+    });
+  }
 });
 
 // GET /
@@ -152,7 +166,7 @@ router.post("/", async (req, res, next) => {
         console.log("[SUCESSO] Conta existe");
         req.session.uID = rows[0].user_id; //Pseudocódigo
         console.log(req.session.uID);
-        return res.redirect("/dashboard");
+        return res.redirect("/categorias");
       } else {
         console.log("[ERRO] Password Incorreta");
         res.status(400).json({
