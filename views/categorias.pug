@@ -1,0 +1,16 @@
+extends base
+block head
+  link(rel="stylesheet", href="/public/css/categorias.css")
+block body
+  script(src="./public/js/categorias.js", type="text/javascript", defer)
+  h5 Categorias Inseridas
+  div(class="container-categorias")
+    if categorias
+      each categoria in categorias
+        div(class="categoria", style="background-color:"+categoria.cor+";", id!=categoria.categoria_id)
+          p(class="titulo-categoria") #{categoria.titulo}
+    else if err
+      p $(err)
+    else
+      p "Ocorreu algum erro, tente novamente mais tarde"
+  input(type="button",value="logout",class="logoutBtn")
