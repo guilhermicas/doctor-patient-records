@@ -2,9 +2,13 @@
 
 - [x] Servidor
 - [x] Autenticacao (cookie de sessao)
-- [] Routes do user
-- [] Routes de funcionalidade
-- [] UX/UI
+- [ ] Routes de funcionalidade
+  - [x] Listar Categorias
+  - [x] Listar Todos Os Pacientes
+  - [ ] Inserir Categorias
+  - [ ] Listar Pacientes Ao Clicar Categoria
+  - [ ] Inserir Pacientes
+- [ ] UX/UI
 
 ## Modelo de dados
 
