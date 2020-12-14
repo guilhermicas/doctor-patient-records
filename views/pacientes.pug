@@ -3,12 +3,19 @@ block head
   link(rel="stylesheet", href="/public/css/base.css")
 block body
   script(src="./public/js/base.js", type="text/javascript", defer)
-  h5 Categorias Inseridas
+  h5 Pacientes Inseridos
   div(class="container-items")
-    if categorias
-      each categoria in categorias
-        div(class="item", style="background-color:"+categoria.cor+";", id!=categoria.categoria_id)
-          p(class="titulo-categoria") #{categoria.titulo}
+    if pacientes
+      table(class="tabela-pacientes")
+        thead
+          tr
+            th Nome
+            th IDCategoria
+        tbody
+          tr
+            each paciente in pacientes
+              td #{paciente.nome}
+              td #{paciente.categoria_id}
     else if err
       p $(err)
     else

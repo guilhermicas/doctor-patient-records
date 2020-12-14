@@ -132,6 +132,28 @@ router.get("/categorias", loginRequired, async (req, res, next) => {
   }
 });
 
+//GET /pacientes
+router.get("/pacientes", loginRequired, async (req, res, next) => {
+  //Buscar pacientes do user atual e devolver no frontend
+  try {
+    let pacientes = await (
+      await dbConnection
+    ).query(
+      "SELECT paciente_id, nome, categoria_id FROM Paciente WHERE user_id=?;",
+      [req.session.uID]
+    );
+
+    return res.render("pacientes", {
+      pacientes: pacientes,
+    });
+  } catch (err) {
+    return res.render("pacientes", {
+      err:
+        "Ocorreu algum erro a aceder aos seus pacientes, experimente re-entrar na página",
+    });
+  }
+});
+
 // GET /
 router.get("/", (req, res, next) => {
   res.render("login");
