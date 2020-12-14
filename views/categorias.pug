@@ -3,6 +3,7 @@ block head
   link(rel="stylesheet", href="/public/css/base.css")
 block body
   script(src="./public/js/base.js", type="text/javascript", defer)
+  script(src="./public/js/categorias.js", type="text/javascript", defer)
   h5 Categorias Inseridas
   div(class="container-items")
     if categorias
@@ -13,4 +14,13 @@ block body
       p $(err)
     else
       p "Ocorreu algum erro, tente novamente mais tarde"
+  form(method="POST", class="formCategoria")
+    p Titulo
+    input(type="text", name="titulo", required)
+    p Descricao
+    input(type="text", name="descricao")
+    p Cor
+    input(type="color", name="cor")
+    br
+    input(type="button", value="Inserir Categoria", class="categoriaSubmit")
   input(type="button",value="logout",class="logoutBtn")

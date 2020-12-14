@@ -6,6 +6,7 @@ let sessions = require("client-sessions");
 //DB
 let dbConnection = require("../config/db_conn");
 let userSchemas = require("../schemas/user.schema");
+let categoriaSchema = require("../schemas/categoria.schema");
 
 //Middlewares
 //Cookie
@@ -129,6 +130,62 @@ router.get("/categorias", loginRequired, async (req, res, next) => {
       err:
         "Ocorreu algum erro a aceder ás suas categorias, experimente re-entrar na página",
     });
+  }
+});
+
+// POST /categorias
+router.post("/categorias", async (req, res, next) => {
+  //Objeto para verificar categoria
+  var categoria = {
+    user_id: req.session.uID,
+    titulo: req.body.titulo,
+    descricao: req.body.descricao,
+    cor: req.body.cor,
+  };
+
+  //Validação de dados do frontend
+  let categoriaValida = categoriaSchema.validate(categoria);
+
+  if (categoriaValida.error) {
+    res.status(400).json({
+      message: categoriaValida.error.details[0].context.label,
+    });
+    return;
+  }
+
+  categoriaValida = categoriaValida.value;
+
+  try {
+    //Caso tudo esteja correto, inserir categoria
+    let dbResponse = await (
+      await dbConnection
+    ).query(
+      "INSERT INTO Categoria (user_id,titulo,descricao,cor) VALUES (?, ?, ?, ?);",
+      [
+        categoriaValida.user_id,
+        categoriaValida.titulo,
+        categoriaValida.descricao,
+        categoriaValida.cor,
+      ]
+    );
+
+    if (dbResponse.affectedRows === 1) {
+      return res
+        .status(201)
+        .json({ message: "Categoria inserida com sucesso" });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+    }
+  } catch (err) {
+    console.log(
+      "[ERRO] Ocorreu algum erro a inserir categoria\n" + err.stack ||
+        err.message
+    );
+    return res
+      .status(500)
+      .json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
   }
 });
 
