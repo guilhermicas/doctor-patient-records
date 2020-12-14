@@ -5,7 +5,7 @@
 - [ ] Routes de funcionalidade
   - [x] Listar Categorias
   - [x] Listar Todos Os Pacientes
-  - [ ] Inserir Categorias
+  - [x] Inserir Categorias
   - [ ] Listar Pacientes Ao Clicar Categoria
   - [ ] Inserir Pacientes
 - [ ] UX/UI
