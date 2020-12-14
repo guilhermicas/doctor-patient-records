@@ -12,10 +12,10 @@ block body
             th Nome
             th IDCategoria
         tbody
-          tr
-            each paciente in pacientes
-              td #{paciente.nome}
-              td #{paciente.categoria_id}
+          each paciente in pacientes
+            tr(id!=paciente.paciente_id)
+                td #{paciente.nome}
+                td #{paciente.categoria_id}
     else if err
       p $(err)
     else
