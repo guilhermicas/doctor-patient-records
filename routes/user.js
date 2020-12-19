@@ -15,6 +15,8 @@ router.use(
     cookieName: "session",
     secret: process.env.COOKIE_SECRET_STR,
     duration: 1000 * 60 * 60 * 6, //Cookie ativa por 6 horas
+    httpOnly: true, // Não deixa o browser conseguir aceder ás informações da cookie
+    secure: true, // Cookie só existe através de https
   })
 );
 
