@@ -7,7 +7,8 @@
   - [x] Listar Todos Os Pacientes
   - [x] Inserir Categorias
   - [ ] Listar Pacientes Ao Clicar Categoria
-  - [ ] Inserir Pacientes
+  - [ ] Visualizar um Paciente
+  - [ ] Inserir Paciente
 - [ ] UX/UI
 
 ## Modelo de dados
