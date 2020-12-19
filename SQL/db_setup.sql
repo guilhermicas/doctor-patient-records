@@ -34,11 +34,11 @@ CREATE TABLE Paciente (
   FOREIGN KEY (categoria_id) REFERENCES Categoria(categoria_id)
 );
 
-CREATE TABLE Atributo (
-  atributo_id INT AUTO_INCREMENT,
-  paciente_id INT NOT NULL,
-  titulo VARCHAR(120) NOT NULL,
-  descricao VARCHAR(1000),
-  PRIMARY KEY (atributo_id),
-  FOREIGN KEY (paciente_id) REFERENCES Paciente(paciente_id)
-);
+--CREATE TABLE Atributo (
+  --atributo_id INT AUTO_INCREMENT,
+  --paciente_id INT NOT NULL,
+  --titulo VARCHAR(120) NOT NULL,
+  --descricao VARCHAR(1000),
+  --PRIMARY KEY (atributo_id),
+  --FOREIGN KEY (paciente_id) REFERENCES Paciente(paciente_id)
+--);
