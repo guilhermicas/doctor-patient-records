@@ -119,16 +119,20 @@ router.post("/registo", async (req, res, next) => {
 //GET /categorias
 router.get("/categorias", loginRequired, async (req, res, next) => {
   //Buscar categorias do user atual e devolver no frontend
+  return res.render("categorias");
+});
+
+//GET /buscarCategorias
+router.get("/buscarCategorias", loginRequired, async (req, res, next) => {
+  //Buscar categorias do user atual e devolver no frontend
   try {
     let categorias = await (
       await dbConnection
     ).query("SELECT * FROM Categoria WHERE user_id=?;", [req.session.uID]);
 
-    return res.render("categorias", {
-      categorias: categorias,
-    });
+    return res.status(200).json(categorias);
   } catch (err) {
-    return res.render("categorias", {
+    return res.status(500).render("categorias", {
       err:
         "Ocorreu algum erro a aceder ás suas categorias, experimente re-entrar na página",
     });

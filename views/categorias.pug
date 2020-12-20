@@ -6,14 +6,6 @@ block body
   script(src="./public/js/categorias.js", type="text/javascript", defer)
   h5 Categorias Inseridas
   div(class="container-items")
-    if categorias
-      each categoria in categorias
-        div(class="item", style="background-color:"+categoria.cor+";", id!=categoria.categoria_id)
-          p(class="titulo-categoria") #{categoria.titulo}
-    else if err
-      p $(err)
-    else
-      p "Ocorreu algum erro, tente novamente mais tarde"
   form(method="POST", class="formCategoria")
     p Titulo
     input(type="text", name="titulo", required)
