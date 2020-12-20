@@ -10,6 +10,11 @@
   - [ ] Visualizar um Paciente
   - [ ] Inserir Paciente
 - [ ] UX/UI
+- [ ] Atualizar README
+  - [ ] Descrever objetivos
+  - [ ] Dificuldades encontradas
+  - [ ] O que irei aprendi e o que vou aprimorar no futuro
+  - [ ] Outros
 
 ## Modelo de dados
 
