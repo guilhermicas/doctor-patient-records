@@ -1,11 +1,6 @@
 async function carregarPacientes(elem) {
   let idCategoria = elem.srcElement.id;
-  let res = await fetch("/buscarPacientes", {
-    method: "GET",
-    body: {
-      idCategoria: idCategoria,
-    },
-  });
+  window.location.pathname = "/pacientes/c/" + idCategoria;
 
   if (res.ok) {
     res = await res.json();
