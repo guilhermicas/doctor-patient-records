@@ -140,7 +140,7 @@ router.get("/buscarCategorias", loginRequired, async (req, res, next) => {
 });
 
 // POST /categorias
-router.post("/categorias", async (req, res, next) => {
+router.post("/categorias", loginRequired, async (req, res, next) => {
   //Objeto para verificar categoria
   var categoria = {
     user_id: req.session.uID,
@@ -195,26 +195,91 @@ router.post("/categorias", async (req, res, next) => {
   }
 });
 
-//GET /pacientes
+// GET /pacientes
 router.get("/pacientes", loginRequired, async (req, res, next) => {
-  //Buscar pacientes do user atual e devolver no frontend
   try {
     let pacientes = await (
       await dbConnection
     ).query(
-      "SELECT paciente_id, nome, categoria_id FROM Paciente WHERE user_id=?;",
+      "SELECT p.paciente_id, p.nome, c.titulo, p.created_at FROM Paciente as p, Categoria as c WHERE p.user_id=? AND p.categoria_id = c.categoria_id",
       [req.session.uID]
     );
+    //TODO: por no frontend o paciente_id associado á row da table
 
     return res.render("pacientes", {
       pacientes: pacientes,
     });
   } catch (err) {
+    console.log(err);
     return res.render("pacientes", {
-      err:
-        "Ocorreu algum erro a aceder aos seus pacientes, experimente re-entrar na página",
+      err: "Ocorreu algum erro, tente novamente daqui a uns momentos",
     });
   }
+});
+
+// GET /pacientes/c/:idCategoria
+router.get(
+  "/pacientes/c/:idCategoria",
+  loginRequired,
+  async (req, res, next) => {
+    try {
+      //Verificar se o idCategoria é o do user autenticado
+      let idCategoria = req.params.idCategoria;
+
+      let qtdCategorias = await (
+        await dbConnection
+      ).query(
+        "SELECT count(*) AS qtdCat FROM Categoria WHERE categoria_id=? AND user_id=?",
+        [idCategoria, req.session.uID]
+      );
+
+      if (qtdCategorias[0].qtdCat == 0) {
+        return res.status(401).render("pacientes", {
+          err: "Não é possivel aceder a estes recursos",
+        });
+      }
+
+      let pacientes = await (
+        await dbConnection
+      ).query(
+        "SELECT p.paciente_id, p.nome, c.titulo, p.created_at FROM Paciente as p, Categoria as c WHERE p.user_id=? AND c.categoria_id = p.categoria_id AND p.categoria_id = ?",
+        [req.session.uID, idCategoria]
+      );
+
+      console.log(pacientes);
+
+      return res.render("pacientes", {
+        pacientes: pacientes,
+      });
+    } catch (err) {
+      console.log(err);
+      return res.render("pacientes", {
+        err: "Ocorreu algum erro, tente novamente daqui a uns momentos",
+      });
+    }
+  }
+);
+
+// GET /paciente/:idPaciente
+router.get("/paciente/:idPaciente", loginRequired, async (req, res, next) => {
+  //Verificar se o paciente é do user autenticado
+  let idPaciente = req.params.idPaciente;
+
+  let paciente = await (
+    await dbConnection
+  ).query(
+    "SELECT nome, descricao, created_at FROM Paciente WHERE user_id=? AND paciente_id=?",
+    [req.session.uID, idPaciente]
+  );
+
+  if (paciente.length === 0) {
+    return res
+      .status(400)
+      .render("paciente", { err: "Volte atrás e tente novamente" });
+  }
+  console.log(paciente);
+  //Caso seja mostrar info, caso não chapéu
+  return res.render("paciente", { paciente: paciente[0] });
 });
 
 // GET /
