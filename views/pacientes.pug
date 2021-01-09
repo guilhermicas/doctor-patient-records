@@ -4,20 +4,21 @@ block head
 block body
   script(src="./public/js/base.js", type="text/javascript", defer)
   h5 Pacientes Inseridos
+  if err
+    h3(class="msgErro") #{err}
   div(class="container-items")
-    if pacientes
-      table(class="tabela-pacientes")
-        thead
-          tr
-            th Nome
-            th IDCategoria
-        tbody
-          each paciente in pacientes
-            tr(id!=paciente.paciente_id)
+    table(class="tabela-pacientes")
+      thead
+        tr
+          th Nome
+          th Categoria
+          th Data de Criação
+        if pacientes
+          tbody
+            each paciente in pacientes
+              tr
+                // - Adicionar idpaciente ao elemento tr de cada paciente para poder depois listar mais especificamente
                 td #{paciente.nome}
-                td #{paciente.categoria_id}
-    else if err
-      p $(err)
-    else
-      p "Ocorreu algum erro, tente novamente mais tarde"
+                td #{paciente.titulo}
+                td #{paciente.created_at}
   input(type="button",value="logout",class="logoutBtn")
