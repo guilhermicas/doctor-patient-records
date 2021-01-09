@@ -1,3 +1,18 @@
+async function carregarPacientes(elem) {
+  let idCategoria = elem.srcElement.id;
+  let res = await fetch("/buscarPacientes", {
+    method: "GET",
+    body: {
+      idCategoria: idCategoria,
+    },
+  });
+
+  if (res.ok) {
+    res = await res.json();
+    console.log(res);
+  }
+}
+
 async function carregarCategorias() {
   let div_container_categorias = document.querySelector(".container-items");
   div_container_categorias.innerHTML = "";
@@ -11,6 +26,7 @@ async function carregarCategorias() {
       newCategoria.className = "item";
       newCategoria.style = "background-color:" + categoria.cor + ";";
       newCategoria.id = categoria.categoria_id;
+      newCategoria.addEventListener("click", carregarPacientes);
 
       let newParagrafo = document.createElement("p");
       newParagrafo.className = "titulo-categoria";
@@ -23,8 +39,6 @@ async function carregarCategorias() {
     alert("Ocorreu algum erro");
   }
 }
-
-carregarCategorias();
 
 document
   .querySelector(".categoriaSubmit")
@@ -56,3 +70,9 @@ document
         alert(msg);
     }
   });
+
+//Cria uma tabela com os clientes de uma categoria em especifico
+//Ao clicar num div, fazer um fetch com o id da categoria a /buscarPacientes e os pacientes que devolver, listar numa tabela
+
+//Buscar pacientes da categoria ao clicar em div
+carregarCategorias();
