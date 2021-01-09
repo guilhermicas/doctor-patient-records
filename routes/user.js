@@ -246,8 +246,6 @@ router.get(
         [req.session.uID, idCategoria]
       );
 
-      console.log(pacientes);
-
       return res.render("pacientes", {
         pacientes: pacientes,
       });

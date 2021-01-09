@@ -1,11 +1,6 @@
 async function carregarPacientes(elem) {
   let idCategoria = elem.srcElement.id;
   window.location.pathname = "/pacientes/c/" + idCategoria;
-
-  if (res.ok) {
-    res = await res.json();
-    console.log(res);
-  }
 }
 
 async function carregarCategorias() {
