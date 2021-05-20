@@ -50,6 +50,27 @@ function loginRequired(req, res, next) {
   next();
 }
 
+//Verifica se o paciente passado pelos parametros no url é do user autenticado
+async function verificarPermissaoPaciente(req, res, next) {
+  let idPaciente = req.params.idPaciente;
+
+  let paciente = await (
+    await dbConnection
+  ).query(
+    "SELECT paciente_id, nome, descricao, created_at FROM Paciente WHERE user_id=? AND paciente_id=?",
+    [req.session.uID, idPaciente]
+  );
+
+  if (paciente.length === 0) {
+    return res
+      .status(400)
+      .render("paciente", { err: "Volte atrás e tente novamente" });
+  }
+
+  res.locals.paciente = paciente;
+  return next();
+}
+
 router.get("/logout", (req, res, next) => {
   req.user = null;
   req.session.uID = null;
@@ -259,25 +280,46 @@ router.get(
 );
 
 // GET /paciente/:idPaciente
-router.get("/paciente/:idPaciente", loginRequired, async (req, res, next) => {
-  //Verificar se o paciente é do user autenticado
-  let idPaciente = req.params.idPaciente;
-
-  let paciente = await (
-    await dbConnection
-  ).query(
-    "SELECT nome, descricao, created_at FROM Paciente WHERE user_id=? AND paciente_id=?",
-    [req.session.uID, idPaciente]
-  );
-
-  if (paciente.length === 0) {
-    return res
-      .status(400)
-      .render("paciente", { err: "Volte atrás e tente novamente" });
+router.get(
+  "/paciente/:idPaciente",
+  loginRequired,
+  verificarPermissaoPaciente,
+  async (req, res, next) => {
+    let paciente = res.locals.paciente[0];
+    return res.render("paciente", { paciente: paciente });
   }
-  console.log(paciente);
-  //Caso seja mostrar info, caso não chapéu
-  return res.render("paciente", { paciente: paciente[0] });
+);
+
+// DELETE /paciente/:idPaciente
+router.delete(
+  "/paciente/:idPaciente",
+  loginRequired,
+  verificarPermissaoPaciente,
+  async (req, res, next) => {
+    //Paciente a eliminar
+    let idPaciente = res.locals.paciente[0].paciente_id;
+
+    //Eliminar o paciente com o id
+    let { err, resultado } = await (
+      await dbConnection
+    ).query("DELETE FROM Paciente WHERE paciente_id=?;", [idPaciente]);
+
+    if (err) {
+      return res.status(500).json({
+        err:
+          "Ocorreu algum erro a eliminar o paciente, tente novamente mais tarde",
+      });
+    } else {
+      return res.status(200).json({
+        msg: "Paciente eliminado com sucesso",
+      });
+    }
+  }
+);
+
+// GET /inserirPaciente
+router.get("/inserirPaciente", loginRequired, (req, res, next) => {
+  return res.render("inserirPaciente");
 });
 
 // GET /
