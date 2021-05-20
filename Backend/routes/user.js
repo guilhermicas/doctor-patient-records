@@ -62,9 +62,8 @@ async function verificarPermissaoPaciente(req, res, next) {
   );
 
   if (paciente.length === 0) {
-    return res
-      .status(400)
-      .render("paciente", { err: "Volte atrás e tente novamente" });
+    //TODO: frontend 403 paciente nao pertence ao utilizador
+    return res.status(403);
   }
 
   res.locals.paciente = paciente;
@@ -75,11 +74,6 @@ router.get("/logout", (req, res, next) => {
   req.user = null;
   req.session.uID = null;
   res.redirect("/");
-});
-
-// GET /registo
-router.get("/registo", (req, res, next) => {
-  res.render("registo");
 });
 
 // POST /registo
@@ -140,12 +134,6 @@ router.post("/registo", async (req, res, next) => {
 //GET /categorias
 router.get("/categorias", loginRequired, async (req, res, next) => {
   //Buscar categorias do user atual e devolver no frontend
-  return res.render("categorias");
-});
-
-//GET /buscarCategorias
-router.get("/buscarCategorias", loginRequired, async (req, res, next) => {
-  //Buscar categorias do user atual e devolver no frontend
   try {
     let categorias = await (
       await dbConnection
@@ -153,10 +141,8 @@ router.get("/buscarCategorias", loginRequired, async (req, res, next) => {
 
     return res.status(200).json(categorias);
   } catch (err) {
-    return res.status(500).render("categorias", {
-      err:
-        "Ocorreu algum erro a aceder ás suas categorias, experimente re-entrar na página",
-    });
+    //TODO: frontend renderizar corretamente o erro
+    return res.status(500);
   }
 });
 
@@ -227,14 +213,12 @@ router.get("/pacientes", loginRequired, async (req, res, next) => {
     );
     //TODO: por no frontend o paciente_id associado á row da table
 
-    return res.render("pacientes", {
-      pacientes: pacientes,
-    });
+    //TODO: devolver JSON de pacientes para frontend
+    return res.json(pacientes);
   } catch (err) {
     console.log(err);
-    return res.render("pacientes", {
-      err: "Ocorreu algum erro, tente novamente daqui a uns momentos",
-    });
+    //TODO: frontend interpretar corretamente status 500
+    return res.status(500);
   }
 });
 
@@ -255,9 +239,8 @@ router.get(
       );
 
       if (qtdCategorias[0].qtdCat == 0) {
-        return res.status(401).render("pacientes", {
-          err: "Não é possivel aceder a estes recursos",
-        });
+        //TODO: frontend interpretar corretamente status 401
+        return res.status(401);
       }
 
       let pacientes = await (
@@ -267,14 +250,11 @@ router.get(
         [req.session.uID, idCategoria]
       );
 
-      return res.render("pacientes", {
-        pacientes: pacientes,
-      });
+      //TODO:JSON frontend
+      return res.json(pacientes);
     } catch (err) {
       console.log(err);
-      return res.render("pacientes", {
-        err: "Ocorreu algum erro, tente novamente daqui a uns momentos",
-      });
+      return res.status(500);
     }
   }
 );
@@ -286,7 +266,7 @@ router.get(
   verificarPermissaoPaciente,
   async (req, res, next) => {
     let paciente = res.locals.paciente[0];
-    return res.render("paciente", { paciente: paciente });
+    return res.json(paciente);
   }
 );
 
@@ -317,18 +297,9 @@ router.delete(
   }
 );
 
-// GET /inserirPaciente
-router.get("/inserirPaciente", loginRequired, (req, res, next) => {
-  return res.render("inserirPaciente");
-});
-
-// GET /
-router.get("/", (req, res, next) => {
-  res.render("login");
-});
-
 // POST /
 router.post("/", async (req, res, next) => {
+  //LOGIN
   //Validação de dados do frontend
   let validatedUser = userSchemas.userLoginSchema.validate(req.body);
 

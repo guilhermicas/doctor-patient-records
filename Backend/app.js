@@ -10,13 +10,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-//Servir ficheiros estáticos para frontend
-app.use("/public", express.static(path.join(__dirname, "public")));
-
-// Configuracao da view engine (pug)
-app.set("views", "./views");
-app.set("view engine", "pug");
-
 // Routes
 userRoutes = require("./routes/user");
 
