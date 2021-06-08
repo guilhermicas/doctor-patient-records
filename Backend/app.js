@@ -1,6 +1,5 @@
 let express = require("express");
 let app = express();
-let path = require("path");
 require("dotenv").config();
 
 // Configuracao do servidor
