@@ -46,7 +46,7 @@ router.use(async (req, res, next) => {
 //Login-Required
 function loginRequired(req, res, next) {
   if (!req.user && !req.session.uID) {
-    return res.status(401);
+    return res.status(401).end();
     //return res.redirect("/");
   }
   next();
@@ -65,7 +65,7 @@ async function verificarPermissaoPaciente(req, res, next) {
 
   if (paciente.length === 0) {
     //TODO: frontend 403 paciente nao pertence ao utilizador
-    return res.status(403);
+    return res.status(403).end();
   }
 
   res.locals.paciente = paciente;
@@ -73,9 +73,10 @@ async function verificarPermissaoPaciente(req, res, next) {
 }
 
 router.get("/logout", (req, res, next) => {
+  console.log("attempting to log out");
   req.user = null;
   req.session.uID = null;
-  res.status(200);
+  return res.status(200).end();
 });
 
 // POST /registo
@@ -86,7 +87,7 @@ router.post("/registo", async (req, res, next) => {
   let validatedUser = userSchemas.userRegisterSchema.validate(req.body);
 
   if (validatedUser.error) {
-    res.status(400).json({
+    res.status(400).send({
       message: validatedUser.error.details[0].context.label,
     });
     return;
@@ -101,7 +102,7 @@ router.post("/registo", async (req, res, next) => {
 
     //Caso já exista uma conta com o e-mail inserido
     if (rows.length > 0) {
-      res.status(409).json({
+      res.status(409).send({
         message: "Este e-mail já está em uso",
       });
       return;
@@ -117,11 +118,11 @@ router.post("/registo", async (req, res, next) => {
     ]);
 
     if (dbResponse.affectedRows === 1) {
-      return res.status(201).json({ message: "Conta criada com sucesso" });
+      return res.status(201).send({ message: "Conta criada com sucesso" });
     } else {
       return res
         .status(400)
-        .json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+        .send({ message: "Ocorreu algum erro, tente novamente mais tarde" });
     }
   } catch (err) {
     console.log(
@@ -129,7 +130,7 @@ router.post("/registo", async (req, res, next) => {
     );
     return res
       .status(500)
-      .json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+      .send({ message: "Ocorreu algum erro, tente novamente mais tarde" });
   }
 });
 
@@ -141,10 +142,10 @@ router.get("/categorias", loginRequired, async (req, res, next) => {
       await dbConnection
     ).query("SELECT * FROM Categoria WHERE user_id=?;", [req.session.uID]);
 
-    return res.status(200).json(categorias);
+    return res.status(200).send(categorias);
   } catch (err) {
     //TODO: frontend renderizar corretamente o erro
-    return res.status(500);
+    return res.status(500).end();
   }
 });
 
@@ -162,7 +163,7 @@ router.post("/categorias", loginRequired, async (req, res, next) => {
   let categoriaValida = categoriaSchema.validate(categoria);
 
   if (categoriaValida.error) {
-    res.status(400).json({
+    res.status(400).send({
       message: categoriaValida.error.details[0].context.label,
     });
     return;
@@ -187,11 +188,11 @@ router.post("/categorias", loginRequired, async (req, res, next) => {
     if (dbResponse.affectedRows === 1) {
       return res
         .status(201)
-        .json({ message: "Categoria inserida com sucesso" });
+        .send({ message: "Categoria inserida com sucesso" });
     } else {
       return res
         .status(400)
-        .json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+        .send({ message: "Ocorreu algum erro, tente novamente mais tarde" });
     }
   } catch (err) {
     console.log(
@@ -200,7 +201,7 @@ router.post("/categorias", loginRequired, async (req, res, next) => {
     );
     return res
       .status(500)
-      .json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+      .send({ message: "Ocorreu algum erro, tente novamente mais tarde" });
   }
 });
 
@@ -216,11 +217,11 @@ router.get("/pacientes", loginRequired, async (req, res, next) => {
     //TODO: por no frontend o paciente_id associado á row da table
 
     //TODO: devolver JSON de pacientes para frontend
-    return res.json(pacientes);
+    return res.send(pacientes);
   } catch (err) {
     console.log(err);
     //TODO: frontend interpretar corretamente status 500
-    return res.status(500);
+    return res.status(500).end();
   }
 });
 
@@ -229,7 +230,7 @@ router.get("/pacientes", loginRequired, async (req, res, next) => {
 //let validatedPaciente = pacienteSchema.validate(req.body);
 
 //if (validatedPaciente.error) {
-//res.status(400).json({
+//res.status(400).send({
 //message: validatedPaciente.error.details[0].context.label,
 //});
 //return;
@@ -252,11 +253,11 @@ router.get("/pacientes", loginRequired, async (req, res, next) => {
 //]);
 
 //if (dbResponse.affectedRows === 1) {
-//return res.status(201).json({ message: "Conta criada com sucesso" });
+//return res.status(201).send({ message: "Conta criada com sucesso" });
 //} else {
 //return res
 //.status(400)
-//.json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+//.send({ message: "Ocorreu algum erro, tente novamente mais tarde" });
 //}
 //} catch (err) {
 //console.log(
@@ -264,7 +265,7 @@ router.get("/pacientes", loginRequired, async (req, res, next) => {
 //);
 //return res
 //.status(500)
-//.json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+//.send({ message: "Ocorreu algum erro, tente novamente mais tarde" });
 //}
 //});
 
@@ -286,7 +287,7 @@ router.get(
 
       if (qtdCategorias[0].qtdCat == 0) {
         //TODO: frontend interpretar corretamente status 401
-        return res.status(401);
+        return res.status(401).end();
       }
 
       let pacientes = await (
@@ -297,10 +298,10 @@ router.get(
       );
 
       //TODO:JSON frontend
-      return res.json(pacientes);
+      return res.send(pacientes);
     } catch (err) {
       console.log(err);
-      return res.status(500);
+      return res.status(500).end();
     }
   }
 );
@@ -312,7 +313,7 @@ router.get(
   verificarPermissaoPaciente,
   async (req, res, next) => {
     let paciente = res.locals.paciente[0];
-    return res.json(paciente);
+    return res.send(paciente);
   }
 );
 
@@ -331,12 +332,12 @@ router.delete(
     ).query("DELETE FROM Paciente WHERE paciente_id=?;", [idPaciente]);
 
     if (err) {
-      return res.status(500).json({
+      return res.status(500).send({
         err:
           "Ocorreu algum erro a eliminar o paciente, tente novamente mais tarde",
       });
     } else {
-      return res.status(200).json({
+      return res.status(200).send({
         msg: "Paciente eliminado com sucesso",
       });
     }
@@ -350,10 +351,9 @@ router.post("/", async (req, res, next) => {
   let validatedUser = userSchemas.userLoginSchema.validate(req.body);
 
   if (validatedUser.error) {
-    res.status(400).json({
+    return res.status(400).send({
       message: validatedUser.error.details[0].context.label,
     });
-    return;
   }
 
   validatedUser = validatedUser.value;
@@ -372,17 +372,16 @@ router.post("/", async (req, res, next) => {
       if (bcrypt.compareSync(validatedUser.password, rows[0].password)) {
         console.log("[SUCESSO] Conta existe");
         req.session.uID = rows[0].user_id; //Pseudocódigo
-        console.log(req.session.uID);
-        return res.redirect("/categorias");
+        return res.status(200).end();
       } else {
         console.log("[ERRO] Password Incorreta");
-        res.status(400).json({
+        res.status(400).send({
           message: "Palavra-passe incorreta",
         });
       }
     } else {
       console.log("[ERRO] E-mail não registado");
-      res.status(400).json({
+      res.status(400).send({
         message: "Não existe conta com esse e-mail",
       });
     }
@@ -392,7 +391,7 @@ router.post("/", async (req, res, next) => {
     );
     return res
       .status(500)
-      .json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+      .send({ message: "Ocorreu algum erro, tente novamente mais tarde" });
   }
 });
 
