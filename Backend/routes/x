@@ -1,0 +1,15 @@
+routes:
+POST / <- login (cria cookie de sessao utilizado sempre que se faz uma request ao servidor quando é preciso validar autenticação)
+GET /logout <- logout (elimina cookie de sessão)
+POST /registo <- (recebe form e regista caso tudo corra bem, senao devolve outro status code)
+GET /categorias <- (busca todas as categorias do utilizador logado(atraves da cookie de sessao))
+POST /categorias <- (recebe form e insere categoria)
+GET /pacientes <- (busca pacientes do utilizador currently logado)
+GET /pacientes/c/:idCategoria <- (busca pacientes do utilizador especificando categoria currently logado)
+GET /pacientes/:idPaciente <- (busca paciente especifico do utilizador currently logado)
+DELETE /pacientes/:idPaciente <- (deleta paciente)
+POST /paciente <- (recebe form e insere paciente)
+
+TODO:
+  DELETE /categoria/:idCategoria <- (deleta uma categoria em especifico)
+

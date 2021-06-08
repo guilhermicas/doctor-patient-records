@@ -6,6 +6,7 @@ let sessions = require("client-sessions");
 //DB
 let dbConnection = require("../config/db_conn");
 let userSchemas = require("../schemas/user.schema");
+let pacienteSchema = require("../schemas/paciente.schema");
 let categoriaSchema = require("../schemas/categoria.schema");
 
 //Middlewares
@@ -45,7 +46,8 @@ router.use(async (req, res, next) => {
 //Login-Required
 function loginRequired(req, res, next) {
   if (!req.user && !req.session.uID) {
-    return res.redirect("/");
+    return res.status(401);
+    //return res.redirect("/");
   }
   next();
 }
@@ -73,7 +75,7 @@ async function verificarPermissaoPaciente(req, res, next) {
 router.get("/logout", (req, res, next) => {
   req.user = null;
   req.session.uID = null;
-  res.redirect("/");
+  res.status(200);
 });
 
 // POST /registo
@@ -221,6 +223,50 @@ router.get("/pacientes", loginRequired, async (req, res, next) => {
     return res.status(500);
   }
 });
+
+// POST /paciente
+//router.post("/paciente", loginRequired, async (req, res, next) => {
+//let validatedPaciente = pacienteSchema.validate(req.body);
+
+//if (validatedPaciente.error) {
+//res.status(400).json({
+//message: validatedPaciente.error.details[0].context.label,
+//});
+//return;
+//}
+
+//validatedPaciente = validatedPaciente.value;
+
+//Ajusta a query string caso haja ou não categoria_id para associar o paciente
+//cat = validatedPaciente.categoria_id ? true : false;
+//if (cat)
+//queryString = "INSERT INTO Paciente (user_id, " + cat ? "categoria_id, " + " password) VALUES (?,"+ cat ? "?," : "" +" ?);"
+
+//Caso tudo esteja correto, inserir Paciente
+//let dbResponse = await (
+//await dbConnection
+//).query(queryString, [
+//validatedUser.nome,
+//validatedUser.email,
+//validatedUser.password,
+//]);
+
+//if (dbResponse.affectedRows === 1) {
+//return res.status(201).json({ message: "Conta criada com sucesso" });
+//} else {
+//return res
+//.status(400)
+//.json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+//}
+//} catch (err) {
+//console.log(
+//"[ERRO] Ocorreu algum erro a registar\n" + err.stack || err.message
+//);
+//return res
+//.status(500)
+//.json({ message: "Ocorreu algum erro, tente novamente mais tarde" });
+//}
+//});
 
 // GET /pacientes/c/:idCategoria
 router.get(
