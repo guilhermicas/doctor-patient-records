@@ -7,7 +7,7 @@ A partir do rest buscamos o path etc
 const PublicRoute = ({isAuth, ComponentToRender: Component, ...rest}) => {
     return (
         <>
-            {isAuth == true ?
+            {isAuth === true ?
                 <Redirect to="/pacientes"/>
             :
                 <Route {...rest} render={(props) => <Component {...props}/>}/>

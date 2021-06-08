@@ -7,7 +7,7 @@ A partir do rest buscamos o path etc
 const ProtectedRoute = ({isAuth, ComponentToRender: Component, ...rest}) => {
     return (
         <>
-            {isAuth == false ?
+            {isAuth === false ?
                 <Redirect to="/"/>
             :
                 <Route {...rest} render={(props) => <Component {...props}/>}/>

@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react"
-import { BrowserRouter as Router, Switch, Route} from "react-router-dom"
+import { BrowserRouter as Router, Switch } from "react-router-dom"
 
 import isLoggedIn from './loginCookie/login'
 
-import PublicRoute from './components/Routes/PublicRoute/PublicRoute'
-import ProtectedRoute from './components/Routes/ProtectedRoute/ProtectedRoute'
-import { FormRegisto } from './components'
-import { Landing } from './components'
+//Routes
+import { PublicRoute, ProtectedRoute }from './components'
+
+//Componentes visuais
+import { Landing, FormRegisto } from './components'
 
 //import { Navbar, RegisterForm, LandingPage, Pacientes, Categorias, Paciente, Categoria, InserirPaciente, InserirCategoria, Footer } from "./components"
 
 function App(){
+    //Flag que indica se o user está autenticado
     const [isAuth, setIsAuth]= useState(false);
 
     //Verifica se ha cookie de sessao e muda a flag
@@ -23,8 +25,8 @@ function App(){
             {/* <Navbar /> */}
             <Switch>
                 {/*No login pages*/ }
-                    <PublicRoute isAuth={isAuth} ComponentToRender={FormRegisto} exact path="/registo"/>
                     <PublicRoute isAuth={isAuth} ComponentToRender={Landing} exact path="/"/>
+                    <PublicRoute isAuth={isAuth} ComponentToRender={FormRegisto} exact path="/registo"/>
                 {/*Login pages*/ }
                     <ProtectedRoute isAuth={isAuth} ComponentToRender={<h1>Listagem de pacientes</h1>} exact path="/pacientes"/>
                     <ProtectedRoute isAuth={isAuth} ComponentToRender={<h1>Informaçoes de um paciente e atualizar paciente</h1>} exact path="/paciente"/>
