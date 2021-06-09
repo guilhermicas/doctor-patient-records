@@ -7,7 +7,7 @@ import isLoggedIn from './loginCookie/login'
 import { PublicRoute, ProtectedRoute }from './components'
 
 //Componentes visuais
-import { Landing, FormRegisto } from './components'
+import { Navbar, Landing, FormRegisto } from './components'
 
 //import { Navbar, RegisterForm, LandingPage, Pacientes, Categorias, Paciente, Categoria, InserirPaciente, InserirCategoria, Footer } from "./components"
 
@@ -22,7 +22,7 @@ function App(){
 
     return (
         <Router>
-            {/* <Navbar /> */}
+            <Navbar />
             <Switch>
                 {/*No login pages*/ }
                     <PublicRoute isAuth={isAuth} ComponentToRender={Landing} exact path="/"/>
