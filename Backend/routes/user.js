@@ -16,7 +16,7 @@ router.use(
     cookieName: "session",
     secret: process.env.COOKIE_SECRET_STR,
     duration: 1000 * 60 * 60 * 6, //Cookie ativa por 6 horas
-    httpOnly: true, // Não deixa o browser conseguir aceder ás informações da cookie
+    //httpOnly: true, // Não deixa o browser conseguir aceder ás informações da cookie
     secure: true, // Cookie só existe através de https
   })
 );
@@ -150,7 +150,7 @@ router.get("/categorias", loginRequired, async (req, res, next) => {
 });
 
 // POST /categorias
-router.post("/categorias", loginRequired, async (req, res, next) => {
+router.post("/categoria", loginRequired, async (req, res, next) => {
   //Objeto para verificar categoria
   var categoria = {
     user_id: req.session.uID,
@@ -286,8 +286,8 @@ router.get(
       );
 
       if (qtdCategorias[0].qtdCat == 0) {
-        //TODO: frontend interpretar corretamente status 401
-        return res.status(401).end();
+        //TODO: frontend interpretar corretamente status 403
+        return res.status(403).end();
       }
 
       let pacientes = await (
@@ -348,6 +348,7 @@ router.delete(
 router.post("/", async (req, res, next) => {
   //LOGIN
   //Validação de dados do frontend
+  console.log(req.session.uID);
   let validatedUser = userSchemas.userLoginSchema.validate(req.body);
 
   if (validatedUser.error) {
@@ -372,6 +373,7 @@ router.post("/", async (req, res, next) => {
       if (bcrypt.compareSync(validatedUser.password, rows[0].password)) {
         console.log("[SUCESSO] Conta existe");
         req.session.uID = rows[0].user_id; //Pseudocódigo
+        console.log(req.session.uID);
         return res.status(200).end();
       } else {
         console.log("[ERRO] Password Incorreta");
