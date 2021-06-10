@@ -8,7 +8,10 @@ userRegisterSchema = Joi.object({
     .max(320)
     .required()
     .label("Email inserido incorretamente"),
-  password: Joi.string().max(256).label("Password inserida incorretamente"),
+  password: Joi.string()
+    .required()
+    .max(256)
+    .label("Password inserida incorretamente"),
 });
 
 //Schema para login de um user
@@ -18,7 +21,10 @@ userLoginSchema = Joi.object({
     .max(320)
     .required()
     .label("Email inserido incorretamente"),
-  password: Joi.string().max(256).label("Password inserida incorretamente"),
+  password: Joi.string()
+    .required()
+    .max(256)
+    .label("Password inserida incorretamente"),
 });
 
 module.exports = {

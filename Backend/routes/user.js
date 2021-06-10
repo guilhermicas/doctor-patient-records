@@ -81,8 +81,6 @@ router.get("/logout", (req, res, next) => {
 
 // POST /registo
 router.post("/registo", async (req, res, next) => {
-  //Encriptação da palavra passe
-  req.body.password = bcrypt.hashSync(req.body.password, 14);
   //Validação de dados do frontend
   let validatedUser = userSchemas.userRegisterSchema.validate(req.body);
 
@@ -94,6 +92,8 @@ router.post("/registo", async (req, res, next) => {
   }
 
   validatedUser = validatedUser.value;
+  //Encriptação da palavra passe
+  validatedUser.password = bcrypt.hashSync(req.body.password, 14);
 
   try {
     let rows = await (
