@@ -4,11 +4,14 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 //Componentes visuais
 import { Navbar, Landing, FormRegisto, DashBoardNav } from './components'
 
-import Orders from './components/DashBoardNav/Orders/Orders'
+//import Pacientes from './components/DashBoardNav/Pacientes/Pacientes'
 
 //import { Navbar, RegisterForm, LandingPage, Pacientes, Categorias, Paciente, Categoria, InserirPaciente, InserirCategoria, Footer } from "./components"
 
 function App(){
+    function Pacientes(){
+        return <h1>Pacientes</h1>
+    }
     return (
         <Router>
             <Switch>
@@ -22,7 +25,7 @@ function App(){
                         <FormRegisto/>
                     </Route>
                 {/*Login pages*/ }
-                    <Route render={() => <DashBoardNav PageComponent={Orders}/>} exact path = "/pacientes"/>
+                    <Route render={() => <DashBoardNav PageComponent={Pacientes}/>} exact path = "/pacientes"/>
                     <Route render={() => <DashBoardNav/>} exact path = "/paciente"/>
                     <Route render={() => <DashBoardNav/>} exact path = "/paciente/inserir"/>
 
