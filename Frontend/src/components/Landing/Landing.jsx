@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -10,15 +10,19 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 
+import { useHistory } from 'react-router-dom'
+
 import Copyright from '../Copyright/Copyright'
 
 import useStyles from './styles'
 
 export default function Landing({checkIsAuth}) {
-  let formValues = {
+  const history = useHistory()
+
+  const [ formValues, setformValues ] = useState({
       "email":"",
       "password":""
-  }
+  })
 
   const classes = useStyles();
 
@@ -40,6 +44,7 @@ export default function Landing({checkIsAuth}) {
     switch (res.status) {
         case 200:
             alert("login efetuado com sucesso")
+            history.push("/pacientes")
             break;
     
         default:
@@ -56,7 +61,10 @@ export default function Landing({checkIsAuth}) {
     const value = target.value;
     const name = target.name;
 
-    formValues[name] = value
+    setformValues({
+      ...formValues,
+      [name]:value
+    })
   }
 
 
