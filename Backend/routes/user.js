@@ -74,8 +74,12 @@ async function verificarPermissaoPaciente(req, res, next) {
 
 router.get("/logout", (req, res, next) => {
   console.log("attempting to log out");
+  console.log(req.session);
+  console.log(req.session.uID);
   req.user = null;
   req.session.uID = null;
+  console.log(req.session);
+  console.log(req.session.uID);
   return res.status(200).end();
 });
 

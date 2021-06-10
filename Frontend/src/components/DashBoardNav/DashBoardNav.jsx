@@ -33,7 +33,10 @@ export default function DashBoardNav({PageComponent}) {
   const history = useHistory()
 
   const handleLogout = async () => {
-      let res = await fetch("http://localhost:2262/logout");
+      let res = await fetch("http://localhost:2262/logout",{
+        method:"GET",
+        credentials: 'include'
+      });
       console.log(res.status)
       history.push("/")
   }

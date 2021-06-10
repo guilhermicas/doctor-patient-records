@@ -32,6 +32,7 @@ export default function Landing({checkIsAuth}) {
     let fetchOpts = {
         method: "POST",
         body: JSON.stringify(formValues),
+        credentials: 'include',
           
         headers: {
             "Content-type": "application/json; charset=UTF-8"

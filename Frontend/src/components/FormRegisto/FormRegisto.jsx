@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,17 +12,20 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 
+import { useHistory } from 'react-router-dom'
+
 import useStyles from './styles'
 import Copyright from '../Copyright/Copyright'
 
 export default function SignUp() {
+  const history = useHistory()
   const classes = useStyles();
 
-  let formValues = {
+  let [formValues, setformValues ] = useState({
       "nome":"",
       "email":"",
       "password":""
-  }
+  })
 
   async function handleSubmit(evt){
     evt.preventDefault()
@@ -40,8 +43,9 @@ export default function SignUp() {
     //Tentativa de registo
     let res = await fetch("http://localhost:2262/registo",fetchOpts)
     switch (res.status) {
-        case 200:
+        case 201:
             alert("Registo efetuado com sucesso")
+            history.push("/")
             break;
     
         default:
@@ -58,7 +62,11 @@ export default function SignUp() {
     const value = target.value;
     const name = target.name;
 
-    formValues[name] = value
+    setformValues({
+      ...formValues,
+      [name]:value
+    })
+    console.log(formValues)
   }
 
   return (
