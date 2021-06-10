@@ -1,45 +1,54 @@
-import React, { useState, useEffect } from "react"
-import { BrowserRouter as Router, Switch } from "react-router-dom"
-
-import isLoggedIn from './loginCookie/login'
-
-//Routes
-import { PublicRoute, ProtectedRoute }from './components'
+import React from "react"
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
 //Componentes visuais
-import { Navbar, Landing, FormRegisto } from './components'
+import { Navbar, Landing, FormRegisto, DashBoardNav } from './components'
+
+import Orders from './components/DashBoardNav/Orders/Orders'
 
 //import { Navbar, RegisterForm, LandingPage, Pacientes, Categorias, Paciente, Categoria, InserirPaciente, InserirCategoria, Footer } from "./components"
 
 function App(){
-    //Flag que indica se o user está autenticado
-    const [isAuth, setIsAuth]= useState(false);
-
-    //Verifica se ha cookie de sessao e muda a flag
-    useEffect(() => {
-        setIsAuth(isLoggedIn())
-    }, [])
-
     return (
         <Router>
-            <Navbar />
             <Switch>
                 {/*No login pages*/ }
-                    <PublicRoute isAuth={isAuth} ComponentToRender={Landing} exact path="/"/>
-                    <PublicRoute isAuth={isAuth} ComponentToRender={FormRegisto} exact path="/registo"/>
+                    <Route exact path = "/">
+                        <Navbar/>
+                        <Landing/>
+                    </Route>
+                    <Route exact path = "/registo">
+                        <Navbar/>
+                        <FormRegisto/>
+                    </Route>
                 {/*Login pages*/ }
-                    <ProtectedRoute isAuth={isAuth} ComponentToRender={<h1>Listagem de pacientes</h1>} exact path="/pacientes"/>
-                    <ProtectedRoute isAuth={isAuth} ComponentToRender={<h1>Informaçoes de um paciente e atualizar paciente</h1>} exact path="/paciente"/>
-                    <ProtectedRoute isAuth={isAuth} ComponentToRender={<h1>Inserir Paciente</h1>} exact path="/paciente/inserir"/>
+                    <Route render={() => <DashBoardNav PageComponent={Orders}/>} exact path = "/pacientes"/>
+                    <Route render={() => <DashBoardNav/>} exact path = "/paciente"/>
+                    <Route render={() => <DashBoardNav/>} exact path = "/paciente/inserir"/>
 
-                    <ProtectedRoute isAuth={isAuth} ComponentToRender={<h1>Listagem de categorias</h1>} exact path="/categorias"/>
-                    <ProtectedRoute isAuth={isAuth} ComponentToRender={<h1>Informaçoes de uma categoria e atualizar categoria</h1>} exact path="/categoria"/>
-                    <ProtectedRoute isAuth={isAuth} ComponentToRender={<h1>Inserir Categoria</h1>} exact path="/categoria/inserir"/>
+                    <Route render={() => <DashBoardNav/>} exact path = "/categorias"/>
+                    <Route render={() => <DashBoardNav/>} exact path = "/categoria"/>
+                    <Route render={() => <DashBoardNav/>} exact path = "/categoria/inserir"/>
+
+                    <Route render={() => <DashBoardNav/>} exact path = "/conta"/>
             </Switch>
             {/*<Footer />*/}
         </Router>
     )
 }
 
+/*
+                    <DashBoardNav />
+                    <Route render={<h1>Dashboard</h1>} exact path="/dashboard"/>
+                    <Route render={<h1>Conta</h1>} exact path="/conta"/>
+
+                    <Route render={<h1>Listagem de pacientes</h1>} exact path="/pacientes"/>
+                    <Route render={<h1>Informaçoes de um paciente e atualizar paciente</h1>} exact path="/paciente"/>
+                    <Route render={<h1>Inserir Paciente</h1>} exact path="/paciente/inserir"/>
+
+                    <Route render={<h1>Listagem de categorias</h1>} exact path="/categorias"/>
+                    <Route render={<h1>Informaçoes de uma categoria e atualizar categoria</h1>} exact path="/categoria"/>
+                    <Route render={<h1>Inserir Categoria</h1>} exact path="/categoria/inserir"/>
+*/
 
 export default App
