@@ -10,10 +10,8 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import { mainListItems, secondaryListItems } from './listItems';
+import { mainListItems } from './listItems';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
-
-//import Pacientes from './Pacientes/Pacientes';
 
 import { useHistory } from 'react-router-dom'
 
@@ -28,7 +26,6 @@ export default function DashBoardNav({PageComponent}) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const history = useHistory()
 
@@ -80,33 +77,13 @@ export default function DashBoardNav({PageComponent}) {
         </div>
         <Divider />
         <List>{mainListItems}</List>
-        <Divider />
-        <List>{secondaryListItems}</List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-        {PageComponent &&
-          <PageComponent/>
-        }
+            {PageComponent &&
+              <PageComponent />
+            }
       </main>
     </div>
   );
 }
-/*
-          <Route component={<h1>Pacientes</h1>} exact path="/pacientes"/>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Orders />
-              </Paper>
-            </Grid>
-          </Grid>
-          <Box pt={4}>
-            <Copyright />
-          </Box>
-        </Container>
-      </main>
-*/
