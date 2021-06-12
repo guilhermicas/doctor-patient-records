@@ -16,7 +16,7 @@ router.use(
     cookieName: "session",
     secret: process.env.COOKIE_SECRET_STR,
     duration: 1000 * 60 * 60 * 6, //Cookie ativa por 6 horas
-    //httpOnly: true, // Não deixa o browser conseguir aceder ás informações da cookie
+    httpOnly: true, // Não deixa o browser conseguir aceder ás informações da cookie
     secure: true, // Cookie só existe através de https
   })
 );
@@ -74,12 +74,8 @@ async function verificarPermissaoPaciente(req, res, next) {
 
 router.get("/logout", (req, res, next) => {
   console.log("attempting to log out");
-  console.log(req.session);
-  console.log(req.session.uID);
   req.user = null;
   req.session.uID = null;
-  console.log(req.session);
-  console.log(req.session.uID);
   return res.status(200).end();
 });
 
@@ -144,7 +140,10 @@ router.get("/categorias", loginRequired, async (req, res, next) => {
   try {
     let categorias = await (
       await dbConnection
-    ).query("SELECT * FROM Categoria WHERE user_id=?;", [req.session.uID]);
+    ).query(
+      "SELECT c.categoria_id, c.titulo, c.descricao, c.cor FROM Categoria as c WHERE user_id=?;",
+      [req.session.uID]
+    );
 
     return res.status(200).send(categorias);
   } catch (err) {
@@ -212,16 +211,14 @@ router.post("/categoria", loginRequired, async (req, res, next) => {
 // GET /pacientes
 router.get("/pacientes", loginRequired, async (req, res, next) => {
   try {
-    let pacientes = await (
-      await dbConnection
-    ).query(
-      "SELECT p.paciente_id, p.nome, c.titulo, p.created_at FROM Paciente as p, Categoria as c WHERE p.user_id=? AND p.categoria_id = c.categoria_id",
+    let pacientes = await (await dbConnection).query(
+      //TODO: Listar corretamente a categoria do paciente
+      "SELECT p.paciente_id, p.nome, p.descricao, p.created_at FROM Paciente as p WHERE p.user_id=?",
       [req.session.uID]
     );
     //TODO: por no frontend o paciente_id associado á row da table
 
-    //TODO: devolver JSON de pacientes para frontend
-    return res.send(pacientes);
+    return res.status(200).send(pacientes);
   } catch (err) {
     console.log(err);
     //TODO: frontend interpretar corretamente status 500
